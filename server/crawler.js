@@ -99,6 +99,13 @@ async function crawl() {
     await new Promise((r) => setTimeout(r, 250));
   }
 
+  // Never overwrite an existing knowledge base with an empty crawl (e.g. when the
+  // source blocks datacenter IPs with HTTP 403). Keep the bundled/previous data.
+  if (docs.length === 0) {
+    console.log('\nCrawl returned 0 pages — keeping existing knowledge base (not overwriting).');
+    return;
+  }
+
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(
     OUT_FILE,
