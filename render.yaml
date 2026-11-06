@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: nnm-bot
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SOURCE_SITE
+        value: https://www.nnm.ac.in
+      - key: MAX_CRAWL_PAGES
+        value: "120"
+      - key: NODE_VERSION
+        value: "20"
