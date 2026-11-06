@@ -259,4 +259,24 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n  Nava Nalanda Mahavihara clone running on port ${PORT}`);
   console.log(`  Knowledge base:`, knowledgeStats());
   if (!API_KEY) console.log('  ⚠  No GEMINI_API_KEY set — chatbot runs in retrieval-only mode.\n');
+
+  // If the knowledge base is empty (e.g. fresh deploy), crawl in the background
+  // so the server is live immediately and gains knowledge shortly after.
+  if (knowledgeStats().pages === 0) {
+    console.log('  Knowledge base empty — starting background crawl…');
+    import('node:child_process').then(({ spawn }) => {
+      const child = spawn(process.execPath, [path.join(__dirname, 'crawler.js')], {
+        stdio: 'inherit',
+      });
+      child.on('exit', (code) => {
+        console.log(`  Background crawl finished (code ${code}). Reloading knowledge…`);
+        try {
+          const n = reloadKnowledge();
+          console.log(`  Knowledge base now has ${n} pages.`);
+        } catch (e) {
+          console.warn('  reload failed:', e.message);
+        }
+      });
+    });
+  }
 });
