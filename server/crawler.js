@@ -38,7 +38,14 @@ function extractContent($) {
 
 async function fetchPage(url) {
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'NNM-KnowledgeBot/1.0 (+clone-project)' },
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': ORIGIN + '/',
+    },
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
